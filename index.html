@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPOP VOTE WORLD</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#100b18;color:white;font-family:Arial}
+header{text-align:center;padding:30px 15px;background:linear-gradient(120deg,#ff399b,#8e42ff)}
+header h1{margin:0;font-size:32px}
+header p{margin-bottom:0}
+main{padding:20px;max-width:1200px;margin:auto}
+input,select{padding:13px;border-radius:12px;border:1px solid #a64dff;background:#24172e;color:white;width:100%;margin-bottom:12px}
+.groups{display:flex;gap:8px;overflow-x:auto;padding:10px 0}
+.groups button{white-space:nowrap}
+button{background:linear-gradient(90deg,#ff399b,#963cff);color:white;border:0;padding:11px 17px;border-radius:25px;cursor:pointer;font-weight:bold}
+button:active{transform:scale(.96)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
+.card{background:#24172e;border:1px solid #59365f;padding:12px;border-radius:16px;text-align:center}
+.card img{width:100%;height:210px;object-fit:cover;border-radius:12px;background:#38223f}
+.card h3{margin:12px 0 5px}
+.card p{color:#ff9bd0;margin:5px}
+.card button{width:100%;margin-top:10px}
+h2{color:#ff83c1}
+#leaderboard{background:#24172e;padding:18px;border-radius:15px;margin-top:30px}
+#leaderboard p{padding:8px;border-bottom:1px solid #553653}
+</style>
+</head>
+<body>
+
+<header>
+<h1>💗 KPOP VOTE WORLD</h1>
+<p>Vote For Your Favorite KPOP Idol!</p>
+</header>
+
+<main>
+<h2>🌸 Find Your Idol</h2>
+<input id="search" placeholder="Search Idol or Group..." oninput="render()">
+
+<div class="groups" id="groups"></div>
+
+<div class="grid" id="idolGrid"></div>
+
+<div id="leaderboard">
+<h2>🏆 Top 10 Idols</h2>
+<div id="ranking"></div>
+</div>
+</main>
+
+<script>
+const data = [
+["Jungwon","ENHYPEN","https://placehold.co/400x500/ffb6d9/ffffff?text=Jungwon"],
+["Heeseung","ENHYPEN","https://placehold.co/400x500/d8a7ff/ffffff?text=Heeseung"],
+["Jay","ENHYPEN","https://placehold.co/400x500/ffc0cb/ffffff?text=Jay"],
+["Jake","ENHYPEN","https://placehold.co/400x500/d8a7ff/ffffff?text=Jake"],
+["Sunghoon","ENHYPEN","https://placehold.co/400x500/ffc0cb/ffffff?text=Sunghoon"],
+["Sunoo","ENHYPEN","https://placehold.co/400x500/ffb6d9/ffffff?text=Sunoo"],
+["Ni-ki","ENHYPEN","https://placehold.co/400x500/d8a7ff/ffffff?text=Ni-ki"],
+
+["Jungkook","BTS","https://placehold.co/400x500/d8a7ff/ffffff?text=Jungkook"],
+["V","BTS","https://placehold.co/400x500/ffc0cb/ffffff?text=V"],
+["Jimin","BTS","https://placehold.co/400x500/ffb6d9/ffffff?text=Jimin"],
+["RM","BTS","https://placehold.co/400x500/d8a7ff/ffffff?text=RM"],
+["Jin","BTS","https://placehold.co/400x500/ffc0cb/ffffff?text=Jin"],
+["Suga","BTS","https://placehold.co/400x500/ffb6d9/ffffff?text=Suga"],
+["J-Hope","BTS","https://placehold.co/400x500/d8a7ff/ffffff?text=J-Hope"],
+
+["Jennie","BLACKPINK","https://placehold.co/400x500/ffb6d9/ffffff?text=Jennie"],
+["Jisoo","BLACKPINK","https://placehold.co/400x500/d8a7ff/ffffff?text=Jisoo"],
+["Lisa","BLACKPINK","https://placehold.co/400x500/ffc0cb/ffffff?text=Lisa"],
+["Rosé","BLACKPINK","https://placehold.co/400x500/d8a7ff/ffffff?text=Rose"],
+
+["Nayeon","TWICE","https://placehold.co/400x500/ffb6d9/ffffff?text=Nayeon"],
+["Sana","TWICE","https://placehold.co/400x500/d8a7ff/ffffff?text=Sana"],
+["Momo","TWICE","https://placehold.co/400x500/ffc0cb/ffffff?text=Momo"],
+["Tzuyu","TWICE","https://placehold.co/400x500/ffb6d9/ffffff?text=Tzuyu"],
+
+["Karina","aespa","https://placehold.co/400x500/d8a7ff/ffffff?text=Karina"],
+["Winter","aespa","https://placehold.co/400x500/ffb6d9/ffffff?text=Winter"],
+["Ningning","aespa","https://placehold.co/400x500/ffc0cb/ffffff?text=Ningning"],
+["Giselle","aespa","https://placehold.co/400x500/d8a7ff/ffffff?text=Giselle"],
+
+["Wonyoung","IVE","https://placehold.co/400x500/ffb6d9/ffffff?text=Wonyoung"],
+["Yujin","IVE","https://placehold.co/400x500/d8a7ff/ffffff?text=Yujin"],
+["Rei","IVE","https://placehold.co/400x500/ffc0cb/ffffff?text=Rei"],
+
+["Felix","Stray Kids","https://placehold.co/400x500/ffb6d9/ffffff?text=Felix"],
+["Hyunjin","Stray Kids","https://placehold.co/400x500/d8a7ff/ffffff?text=Hyunjin"],
+["Bang Chan","Stray Kids","https://placehold.co/400x500/ffc0cb/ffffff?text=Bang+Chan"],
+["Lee Know","Stray Kids","https://placehold.co/400x500/d8a7ff/ffffff?text=Lee+Know"],
+
+["Yeonjun","TXT","https://placehold.co/400x500/ffb6d9/ffffff?text=Yeonjun"],
+["Soobin","TXT","https://placehold.co/400x500/d8a7ff/ffffff?text=Soobin"],
+["Beomgyu","TXT","https://placehold.co/400x500/ffc0cb/ffffff?text=Beomgyu"],
+
+["Mingyu","SEVENTEEN","https://placehold.co/400x500/ffb6d9/ffffff?text=Mingyu"],
+["Wonwoo","SEVENTEEN","https://placehold.co/400x500/d8a7ff/ffffff?text=Wonwoo"],
+["Vernon","SEVENTEEN","https://placehold.co/400x500/ffc0cb/ffffff?text=Vernon"],
+
+["Winter","LE SSERAFIM","https://placehold.co/400x500/d8a7ff/ffffff?text=Winter"],
+["Chaewon","LE SSERAFIM","https://placehold.co/400x500/ffb6d9/ffffff?text=Chaewon"],
+["Sakura","LE SSERAFIM","https://placehold.co/400x500/ffc0cb/ffffff?text=Sakura"],
+
+["Ahyeon","BABYMONSTER","https://placehold.co/400x500/ffb6d9/ffffff?text=Ahyeon"],
+["Ruka","BABYMONSTER","https://placehold.co/400x500/d8a7ff/ffffff?text=Ruka"],
+
+["Yeji","ITZY","https://placehold.co/400x500/ffb6d9/ffffff?text=Yeji"],
+["Irene","Red Velvet","https://placehold.co/400x500/d8a7ff/ffffff?text=Irene"],
+["Mark","NCT","https://placehold.co/400x500/ffc0cb/ffffff?text=Mark"],
+["Baekhyun","EXO","https://placehold.co/400x500/ffb6d9/ffffff?text=Baekhyun"],
+["San","ATEEZ","https://placehold.co/400x500/d8a7ff/ffffff?text=San"]
+].map(([name,group,image])=>({name,group,image,votes:0}));
+
+let selected="ALL";
+
+const groupNames=["ALL",...new Set(data.map(x=>x.group))];
+
+document.getElementById("groups").innerHTML=
+groupNames.map(g=>`<button onclick="selectGroup('${g}')">${g}</button>`).join("");
+
+function selectGroup(g){
+selected=g;
+render();
+}
+
+function vote(i){
+data[i].votes++;
+render();
+}
+
+function render(){
+let query=document.getElementById("search").value.toLowerCase();
+let filtered=data.map((x,i)=>({...x,index:i})).filter(x=>
+(selected==="ALL"||x.group===selected)&&
+(x.name.toLowerCase().includes(query)||x.group.toLowerCase().includes(query))
+);
+
+document.getElementById("idolGrid").innerHTML=filtered.map(x=>`
+<div class="card">
+<img src="${x.image}" alt="${x.name}">
+<h3>${x.name}</h3>
+<p>${x.group}</p>
+<p>💗 ${x.votes} Votes</p>
+<button onclick="vote(${x.index})">VOTE 💗</button>
+</div>`).join("");
+
+let top=[...data].sort((a,b)=>b.votes-a.votes).slice(0,10);
+document.getElementById("ranking").innerHTML=top.map((x,i)=>
+`<p>${i+1}. ${x.name} (${x.group}) — ${x.votes} votes</p>`
+).join("");
+}
+
+render();
+</script>
+</body>
+</html>
